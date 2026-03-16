@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Controller\Api;
 
@@ -31,7 +31,7 @@ final class CartController extends AbstractController
     #[Route('/{id}', name: 'api_cart_get', methods: ['GET'])]
     public function get(string $id): JsonResponse
     {
-        if (trim($id) === '') {
+        if (\trim($id) === '') {
             return $this->errorResponse('Missing cart ID', JsonResponse::HTTP_BAD_REQUEST);
         }
 
@@ -52,17 +52,20 @@ final class CartController extends AbstractController
     #[Route('/add', name: 'api_cart_add_product', methods: ['POST'])]
     public function add(Request $request): JsonResponse
     {
-        $data = json_decode((string) $request->getContent(), true);
+        $data = \json_decode((string) $request->getContent(), true);
 
         if (!\is_array($data)) {
-            return $this->errorResponse('Invalid JSON body', JsonResponse::HTTP_BAD_REQUEST);
+            return $this->errorResponse(
+                'Invalid JSON body',
+                JsonResponse::HTTP_BAD_REQUEST,
+            );
         }
 
         $cartId = $data['cart_id'] ?? null;
         $sku = $data['sku'] ?? null;
-        $quantity = (int) ($data['quantity'] ?? 1);
+        $quantity = $data['quantity'] ?? 1;
 
-        if (!\is_string($cartId) || !\is_string($sku)) {
+        if (!\is_string($cartId) || !\is_string($sku) || !\is_int($quantity)) {
             return $this->errorResponse('Missing required fields: cart_id and sku', JsonResponse::HTTP_BAD_REQUEST);
         }
 
@@ -72,7 +75,7 @@ final class CartController extends AbstractController
 
         try {
             $cart = $this->cartService->addProduct($cartId, $sku, $quantity);
-        } catch (CartNotFoundException|ProductNotFoundException $exception) {
+        } catch (CartNotFoundException | ProductNotFoundException $exception) {
             $statusCode = $exception instanceof ProductNotFoundException
                 ? JsonResponse::HTTP_NOT_FOUND
                 : JsonResponse::HTTP_INTERNAL_SERVER_ERROR;
@@ -88,10 +91,13 @@ final class CartController extends AbstractController
     #[Route('/remove', name: 'api_cart_remove_product', methods: ['POST'])]
     public function remove(Request $request): JsonResponse
     {
-        $data = json_decode((string) $request->getContent(), true);
+        $data = \json_decode((string) $request->getContent(), true);
 
         if (!\is_array($data)) {
-            return $this->errorResponse('Invalid JSON body', JsonResponse::HTTP_BAD_REQUEST);
+            return $this->errorResponse(
+                'Invalid JSON body',
+                JsonResponse::HTTP_BAD_REQUEST,
+            );
         }
 
         $cartId = $data['cart_id'] ?? null;
@@ -105,16 +111,26 @@ final class CartController extends AbstractController
         $quantityValue = null;
 
         if ($quantity !== null) {
-            $quantityValue = (int) $quantity;
-
-            if ($quantityValue < 1) {
-                return $this->errorResponse('Quantity must be at least 1 when provided', JsonResponse::HTTP_BAD_REQUEST);
+            if (!\is_int($quantity)) {
+                return $this->errorResponse(
+                    'Quantity must be an integer when provided',
+                    JsonResponse::HTTP_BAD_REQUEST,
+                );
             }
+
+            if ($quantity < 1) {
+                return $this->errorResponse(
+                    'Quantity must be at least 1 when provided',
+                    JsonResponse::HTTP_BAD_REQUEST,
+                );
+            }
+
+            $quantityValue = $quantity;
         }
 
         try {
             $cart = $this->cartService->removeProduct($cartId, $sku, $quantityValue);
-        } catch (CartNotFoundException|ProductNotFoundException $exception) {
+        } catch (CartNotFoundException | ProductNotFoundException $exception) {
             return $this->errorResponse($exception->getMessage(), JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         } catch (\Throwable $throwable) {
             return $this->errorResponse($throwable->getMessage(), JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -128,6 +144,24 @@ final class CartController extends AbstractController
         return new JsonResponse(['error' => $message], $statusCode);
     }
 
+    /**
+     * @return array{
+     *     id: string,
+     *     items: list<array{
+     *         product: array{
+     *             sku: string,
+     *             name: string,
+     *             price: float,
+     *             description: string|null
+     *         },
+     *         quantity: int,
+     *         total: float
+     *     }>,
+     *     item_count: int,
+     *     total_quantity: int,
+     *     total: float
+     * }
+     */
     private function normalizeCart(\App\Entity\Cart\Cart $cart): array
     {
         $items = [];
@@ -156,4 +190,3 @@ final class CartController extends AbstractController
         ];
     }
 }
-

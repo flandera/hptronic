@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Service\Geo;
 
@@ -22,7 +22,7 @@ class MapyGeocodingService
             throw new \InvalidArgumentException('MAPY API key must not be empty.');
         }
 
-        $this->baseUrl = rtrim($baseUrl ?? 'https://api.mapy.cz/v1', '/');
+        $this->baseUrl = \rtrim($baseUrl ?? 'https://api.mapy.cz/v1', '/');
         $this->apiKey = $mapyApiKey;
     }
 
@@ -41,9 +41,9 @@ class MapyGeocodingService
 
         $response = $this->request(
             'GET',
-            sprintf('%s/geocode', $this->baseUrl),
+            \sprintf('%s/geocode', $this->baseUrl),
             [
-                'query' => array_filter(
+                'query' => \array_filter(
                     [
                         'apikey' => $this->apiKey,
                         'query' => $query,
@@ -73,9 +73,9 @@ class MapyGeocodingService
 
         $response = $this->request(
             'GET',
-            sprintf('%s/suggest', $this->baseUrl),
+            \sprintf('%s/suggest', $this->baseUrl),
             [
-                'query' => array_filter(
+                'query' => \array_filter(
                     [
                         'apikey' => $this->apiKey,
                         'query' => $query,
@@ -94,14 +94,17 @@ class MapyGeocodingService
 
         $suggestions = [];
 
-        foreach ($data['items'] as $item) {
-            if (!\is_array($item)) {
+        foreach ($data['items'] as $rawItem) {
+            if (!\is_array($rawItem)) {
                 continue;
             }
 
-            $name = (string) ($item['name'] ?? '');
-            $label = (string) ($item['label'] ?? '');
-            $location = (string) ($item['location'] ?? '');
+            /** @var array<string, mixed> $item */
+            $item = $rawItem;
+
+            $name = isset($item['name']) && \is_string($item['name']) ? $item['name'] : '';
+            $label = isset($item['label']) && \is_string($item['label']) ? $item['label'] : '';
+            $location = isset($item['location']) && \is_string($item['location']) ? $item['location'] : '';
 
             if ($name === '' && $location === '' && $label === '') {
                 continue;
@@ -121,7 +124,7 @@ class MapyGeocodingService
                 $parts[] = $location;
             }
 
-            $suggestions[] = implode(' - ', $parts);
+            $suggestions[] = \implode(' - ', $parts);
         }
 
         return ['suggestions' => $suggestions];
@@ -136,7 +139,7 @@ class MapyGeocodingService
             $response = $this->httpClient->request($method, $url, $options);
         } catch (\Throwable $throwable) {
             throw new MapyApiException(
-                sprintf('Failed to call Mapy API: %s', $throwable->getMessage()),
+                \sprintf('Failed to call Mapy API: %s', $throwable->getMessage()),
                 0,
                 $throwable,
             );
@@ -146,7 +149,7 @@ class MapyGeocodingService
 
         if ($statusCode < 200 || $statusCode >= 300) {
             throw new MapyApiException(
-                sprintf('Mapy API returned HTTP %d.', $statusCode),
+                \sprintf('Mapy API returned HTTP %d.', $statusCode),
                 $statusCode,
             );
         }
@@ -164,7 +167,7 @@ class MapyGeocodingService
             $data = $response->toArray(false);
         } catch (\Throwable $throwable) {
             throw new MapyApiException(
-                sprintf('Failed to decode Mapy API response: %s', $throwable->getMessage()),
+                \sprintf('Failed to decode Mapy API response: %s', $throwable->getMessage()),
                 0,
                 $throwable,
             );
@@ -173,4 +176,3 @@ class MapyGeocodingService
         return $data;
     }
 }
-

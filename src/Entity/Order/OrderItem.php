@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Entity\Order;
 
@@ -13,7 +13,7 @@ class OrderItem
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private int $id; // @phpstan-ignore-line Doctrine sets the identifier via metadata.
 
     #[ORM\ManyToOne(targetEntity: Order::class, inversedBy: 'items')]
     #[ORM\JoinColumn(nullable: false)]
@@ -43,7 +43,7 @@ class OrderItem
         $this->quantity = $quantity;
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -83,4 +83,3 @@ class OrderItem
         return $this->price * $this->quantity;
     }
 }
-

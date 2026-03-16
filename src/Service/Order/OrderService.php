@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Service\Order;
 
@@ -60,14 +60,14 @@ class OrderService
         $order = $this->orderRepository->find($id);
 
         if ($order === null) {
-            throw new OrderNotFoundException(sprintf('Order with id "%s" not found.', $id));
+            throw new OrderNotFoundException(\sprintf('Order with id "%s" not found.', $id));
         }
 
         return $order;
     }
 
     /**
-     * @return OrderItem[]
+     * @return list<OrderItem>
      */
     private function mapCartToOrderItems(Cart $cart): array
     {
@@ -86,4 +86,3 @@ class OrderService
         return $items;
     }
 }
-

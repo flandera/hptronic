@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Entity\Order;
 
@@ -23,7 +23,12 @@ class Order
     /**
      * @var Collection<int, OrderItem>
      */
-    #[ORM\OneToMany(mappedBy: 'order', targetEntity: OrderItem::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(
+        mappedBy: 'order',
+        targetEntity: OrderItem::class,
+        cascade: ['persist', 'remove'],
+        orphanRemoval: true,
+    )]
     private Collection $items;
 
     #[ORM\Column]
@@ -35,6 +40,9 @@ class Order
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $geoLocation = null;
 
+    /**
+     * @param list<OrderItem> $items
+     */
     public function __construct(
         string $id,
         \DateTimeImmutable $createdAt,
@@ -87,4 +95,3 @@ class Order
         return $this->geoLocation;
     }
 }
-

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Entity\Cart;
 
@@ -14,7 +14,7 @@ class CartItem
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private int $id; // @phpstan-ignore-line Doctrine sets the identifier via metadata.
 
     #[ORM\ManyToOne(targetEntity: Cart::class, inversedBy: 'items')]
     #[ORM\JoinColumn(nullable: false)]
@@ -38,7 +38,7 @@ class CartItem
         $this->quantity = $quantity;
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -85,4 +85,3 @@ class CartItem
         return $this->product->getPrice() * $this->quantity;
     }
 }
-

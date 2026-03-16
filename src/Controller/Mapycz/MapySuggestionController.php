@@ -1,8 +1,8 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
-namespace App\Controller\MapyCZ;
+namespace App\Controller\Mapycz;
 
 use App\Exception\Geo\MapyApiException;
 use App\Service\Geo\MapyGeocodingService;
@@ -26,7 +26,7 @@ final class MapySuggestionController extends AbstractController
         $language = $request->query->get('lang');
         $limit = $request->query->getInt('limit', 5);
 
-        if (trim($query) === '') {
+        if (\trim($query) === '') {
             return new JsonResponse(
                 ['error' => 'Missing query parameter "q".'],
                 JsonResponse::HTTP_BAD_REQUEST,
@@ -50,4 +50,3 @@ final class MapySuggestionController extends AbstractController
         return new JsonResponse($result);
     }
 }
-

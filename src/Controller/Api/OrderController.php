@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Controller\Api;
 
@@ -23,7 +23,7 @@ final class OrderController extends AbstractController
     #[Route('', name: 'api_orders_create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
-        $data = json_decode((string) $request->getContent(), true);
+        $data = \json_decode((string) $request->getContent(), true);
 
         if (!\is_array($data)) {
             return $this->errorResponse('Invalid JSON body', JsonResponse::HTTP_BAD_REQUEST);
@@ -33,7 +33,10 @@ final class OrderController extends AbstractController
         $shippingAddress = $data['shipping_address'] ?? null;
 
         if (!\is_string($cartId) || !\is_string($shippingAddress) || $cartId === '' || $shippingAddress === '') {
-            return $this->errorResponse('Missing required fields: cart_id and shipping_address', JsonResponse::HTTP_BAD_REQUEST);
+            return $this->errorResponse(
+                'Missing required fields: cart_id and shipping_address',
+                JsonResponse::HTTP_BAD_REQUEST,
+            );
         }
 
         try {
@@ -52,7 +55,7 @@ final class OrderController extends AbstractController
     {
         $orders = $this->orderService->getAllOrders();
 
-        $normalized = array_map(
+        $normalized = \array_map(
             fn (\App\Entity\Order\Order $order): array => $this->normalizeOrder($order),
             $orders,
         );
@@ -63,7 +66,7 @@ final class OrderController extends AbstractController
     #[Route('/{id}', name: 'api_orders_get', methods: ['GET'])]
     public function get(string $id): JsonResponse
     {
-        if (trim($id) === '') {
+        if (\trim($id) === '') {
             return $this->errorResponse('Missing order ID', JsonResponse::HTTP_BAD_REQUEST);
         }
 
@@ -83,6 +86,22 @@ final class OrderController extends AbstractController
         return new JsonResponse(['error' => $message], $statusCode);
     }
 
+    /**
+     * @return array{
+     *     id: string,
+     *     created_at: string,
+     *     items: list<array{
+     *         sku: string,
+     *         name: string,
+     *         price: float,
+     *         quantity: int,
+     *         total: float
+     *     }>,
+     *     total: float,
+     *     shipping_address: string,
+     *     geo_location: string|null
+     * }
+     */
     private function normalizeOrder(\App\Entity\Order\Order $order): array
     {
         $items = [];
@@ -107,4 +126,3 @@ final class OrderController extends AbstractController
         ];
     }
 }
-

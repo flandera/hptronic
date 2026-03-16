@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Tests\Controller\Api;
 
@@ -41,7 +41,7 @@ final class CartControllerTest extends TestCase
 
         self::assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
 
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
 
         self::assertIsArray($data);
         self::assertSame('cart-id', $data['id']);
@@ -58,7 +58,7 @@ final class CartControllerTest extends TestCase
 
         self::assertSame(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
 
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Missing cart ID', $data['error']);
     }
 
@@ -74,7 +74,7 @@ final class CartControllerTest extends TestCase
 
         self::assertSame(JsonResponse::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
 
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Cart with id "missing-id" not found.', $data['error']);
     }
 
@@ -91,7 +91,7 @@ final class CartControllerTest extends TestCase
         $response = $this->controller->get('cart-id');
 
         self::assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
 
         self::assertSame('cart-id', $data['id']);
     }
@@ -103,18 +103,18 @@ final class CartControllerTest extends TestCase
         $response = $this->controller->add($request);
 
         self::assertSame(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Invalid JSON body', $data['error']);
     }
 
     public function testAddReturnsBadRequestWhenMissingCartIdOrSku(): void
     {
-        $request = new Request([], [], [], [], [], [], json_encode(['cart_id' => 'cart-id']));
+        $request = new Request([], [], [], [], [], [], \json_encode(['cart_id' => 'cart-id']));
 
         $response = $this->controller->add($request);
 
         self::assertSame(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Missing required fields: cart_id and sku', $data['error']);
     }
 
@@ -125,12 +125,12 @@ final class CartControllerTest extends TestCase
             'sku' => 'SKU123',
             'quantity' => 0,
         ];
-        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $request = new Request([], [], [], [], [], [], \json_encode($payload));
 
         $response = $this->controller->add($request);
 
         self::assertSame(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Quantity must be at least 1', $data['error']);
     }
 
@@ -141,7 +141,7 @@ final class CartControllerTest extends TestCase
             'sku' => 'MISSING',
             'quantity' => 1,
         ];
-        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $request = new Request([], [], [], [], [], [], \json_encode($payload));
 
         $this->cartService
             ->expects(self::once())
@@ -152,7 +152,7 @@ final class CartControllerTest extends TestCase
         $response = $this->controller->add($request);
 
         self::assertSame(JsonResponse::HTTP_NOT_FOUND, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Product with SKU "MISSING" not found.', $data['error']);
     }
 
@@ -163,7 +163,7 @@ final class CartControllerTest extends TestCase
             'sku' => 'SKU123',
             'quantity' => 1,
         ];
-        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $request = new Request([], [], [], [], [], [], \json_encode($payload));
 
         $this->cartService
             ->expects(self::once())
@@ -173,7 +173,7 @@ final class CartControllerTest extends TestCase
         $response = $this->controller->add($request);
 
         self::assertSame(JsonResponse::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Cart with id "missing-id" not found.', $data['error']);
     }
 
@@ -184,7 +184,7 @@ final class CartControllerTest extends TestCase
             'sku' => 'SKU123',
             'quantity' => 1,
         ];
-        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $request = new Request([], [], [], [], [], [], \json_encode($payload));
 
         $this->cartService
             ->expects(self::once())
@@ -194,7 +194,7 @@ final class CartControllerTest extends TestCase
         $response = $this->controller->add($request);
 
         self::assertSame(JsonResponse::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Unexpected failure', $data['error']);
     }
 
@@ -205,7 +205,7 @@ final class CartControllerTest extends TestCase
             'sku' => 'SKU123',
             'quantity' => 2,
         ];
-        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $request = new Request([], [], [], [], [], [], \json_encode($payload));
         $cart = $this->createCartMock();
 
         $this->cartService
@@ -217,7 +217,7 @@ final class CartControllerTest extends TestCase
         $response = $this->controller->add($request);
 
         self::assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('cart-id', $data['id']);
     }
 
@@ -228,18 +228,18 @@ final class CartControllerTest extends TestCase
         $response = $this->controller->remove($request);
 
         self::assertSame(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Invalid JSON body', $data['error']);
     }
 
     public function testRemoveReturnsBadRequestWhenMissingCartIdOrSku(): void
     {
-        $request = new Request([], [], [], [], [], [], json_encode(['cart_id' => 'cart-id']));
+        $request = new Request([], [], [], [], [], [], \json_encode(['cart_id' => 'cart-id']));
 
         $response = $this->controller->remove($request);
 
         self::assertSame(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Missing required fields: cart_id and sku', $data['error']);
     }
 
@@ -250,12 +250,12 @@ final class CartControllerTest extends TestCase
             'sku' => 'SKU123',
             'quantity' => 0,
         ];
-        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $request = new Request([], [], [], [], [], [], \json_encode($payload));
 
         $response = $this->controller->remove($request);
 
         self::assertSame(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Quantity must be at least 1 when provided', $data['error']);
     }
 
@@ -265,7 +265,7 @@ final class CartControllerTest extends TestCase
             'cart_id' => 'missing-id',
             'sku' => 'SKU123',
         ];
-        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $request = new Request([], [], [], [], [], [], \json_encode($payload));
 
         $this->cartService
             ->expects(self::once())
@@ -275,7 +275,7 @@ final class CartControllerTest extends TestCase
         $response = $this->controller->remove($request);
 
         self::assertSame(JsonResponse::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Cart with id "missing-id" not found.', $data['error']);
     }
 
@@ -285,7 +285,7 @@ final class CartControllerTest extends TestCase
             'cart_id' => 'cart-id',
             'sku' => 'MISSING',
         ];
-        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $request = new Request([], [], [], [], [], [], \json_encode($payload));
 
         $this->cartService
             ->expects(self::once())
@@ -295,7 +295,7 @@ final class CartControllerTest extends TestCase
         $response = $this->controller->remove($request);
 
         self::assertSame(JsonResponse::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Product with SKU "MISSING" not found.', $data['error']);
     }
 
@@ -305,7 +305,7 @@ final class CartControllerTest extends TestCase
             'cart_id' => 'cart-id',
             'sku' => 'SKU123',
         ];
-        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $request = new Request([], [], [], [], [], [], \json_encode($payload));
 
         $this->cartService
             ->expects(self::once())
@@ -315,7 +315,7 @@ final class CartControllerTest extends TestCase
         $response = $this->controller->remove($request);
 
         self::assertSame(JsonResponse::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Unexpected failure', $data['error']);
     }
 
@@ -326,7 +326,7 @@ final class CartControllerTest extends TestCase
             'sku' => 'SKU123',
             'quantity' => 1,
         ];
-        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $request = new Request([], [], [], [], [], [], \json_encode($payload));
         $cart = $this->createCartMock();
 
         $this->cartService
@@ -338,7 +338,7 @@ final class CartControllerTest extends TestCase
         $response = $this->controller->remove($request);
 
         self::assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('cart-id', $data['id']);
     }
 
@@ -392,4 +392,3 @@ final class CartControllerTest extends TestCase
         return $cart;
     }
 }
-

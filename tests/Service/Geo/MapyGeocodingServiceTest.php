@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Tests\Service\Geo;
 
@@ -69,7 +69,7 @@ final class MapyGeocodingServiceTest extends TestCase
             ->method('request')
             ->with(
                 'GET',
-            'https://api.mapy.cz/v1/geocode',
+                'https://api.mapy.cz/v1/geocode',
                 [
                     'query' => [
                         'apikey' => 'test-api-key',
@@ -101,7 +101,7 @@ final class MapyGeocodingServiceTest extends TestCase
             ->method('request')
             ->with(
                 'GET',
-            'https://api.mapy.cz/v1/geocode',
+                'https://api.mapy.cz/v1/geocode',
                 [
                     'query' => [
                         'apikey' => 'test-api-key',
@@ -203,7 +203,7 @@ final class MapyGeocodingServiceTest extends TestCase
             ->method('request')
             ->with(
                 'GET',
-            'https://api.mapy.cz/v1/suggest',
+                'https://api.mapy.cz/v1/suggest',
                 [
                     'query' => [
                         'apikey' => 'test-api-key',
@@ -273,4 +273,3 @@ final class MapyGeocodingServiceTest extends TestCase
         $this->service->geocode('Prague');
     }
 }
-

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\DataFixtures;
 
@@ -25,4 +25,3 @@ final class ProductFixtures extends Fixture
         $manager->flush();
     }
 }
-

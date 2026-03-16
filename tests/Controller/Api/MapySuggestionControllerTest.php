@@ -1,10 +1,10 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Tests\Controller\Api;
 
-use App\Controller\MapyCZ\MapySuggestionController;
+use App\Controller\Mapycz\MapySuggestionController;
 use App\Exception\Geo\MapyApiException;
 use App\Service\Geo\MapyGeocodingService;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -31,7 +31,7 @@ final class MapySuggestionControllerTest extends TestCase
         $response = $this->controller->suggest($request);
 
         self::assertSame(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Missing query parameter "q".', $data['error']);
     }
 
@@ -48,7 +48,7 @@ final class MapySuggestionControllerTest extends TestCase
         $response = $this->controller->suggest($request);
 
         self::assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame(['suggestions' => ['Prague']], $data);
     }
 
@@ -64,7 +64,7 @@ final class MapySuggestionControllerTest extends TestCase
         $response = $this->controller->suggest($request);
 
         self::assertSame(JsonResponse::HTTP_BAD_GATEWAY, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Upstream error', $data['error']);
     }
 
@@ -80,8 +80,7 @@ final class MapySuggestionControllerTest extends TestCase
         $response = $this->controller->suggest($request);
 
         self::assertSame(JsonResponse::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Unexpected failure', $data['error']);
     }
 }
-

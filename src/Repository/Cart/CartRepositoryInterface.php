@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Repository\Cart;
 
@@ -14,4 +14,3 @@ interface CartRepositoryInterface
 
     public function find(string $id): ?Cart;
 }
-

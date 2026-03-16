@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\DataFixtures;
 
@@ -63,6 +63,9 @@ final class OrderFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
+    /**
+     * @return array<class-string<Fixture>>
+     */
     public function getDependencies(): array
     {
         return [
@@ -71,4 +74,3 @@ final class OrderFixtures extends Fixture implements DependentFixtureInterface
         ];
     }
 }
-

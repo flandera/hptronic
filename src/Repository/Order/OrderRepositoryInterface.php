@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Repository\Order;
 
@@ -19,4 +19,3 @@ interface OrderRepositoryInterface
 
     public function find(string $id): ?Order;
 }
-

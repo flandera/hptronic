@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Tests\Controller\Api;
 
@@ -34,19 +34,19 @@ final class OrderControllerTest extends TestCase
         $response = $this->controller->create($request);
 
         self::assertSame(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Invalid JSON body', $data['error']);
     }
 
     public function testCreateReturnsBadRequestWhenMissingRequiredFields(): void
     {
         $payload = ['cart_id' => 'cart-id'];
-        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $request = new Request([], [], [], [], [], [], \json_encode($payload));
 
         $response = $this->controller->create($request);
 
         self::assertSame(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Missing required fields: cart_id and shipping_address', $data['error']);
     }
 
@@ -56,7 +56,7 @@ final class OrderControllerTest extends TestCase
             'cart_id' => 'missing-id',
             'shipping_address' => 'Address',
         ];
-        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $request = new Request([], [], [], [], [], [], \json_encode($payload));
 
         $this->orderService
             ->expects(self::once())
@@ -67,7 +67,7 @@ final class OrderControllerTest extends TestCase
         $response = $this->controller->create($request);
 
         self::assertSame(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Cart with id "missing-id" not found.', $data['error']);
     }
 
@@ -77,7 +77,7 @@ final class OrderControllerTest extends TestCase
             'cart_id' => 'cart-id',
             'shipping_address' => 'Address',
         ];
-        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $request = new Request([], [], [], [], [], [], \json_encode($payload));
 
         $this->orderService
             ->expects(self::once())
@@ -87,7 +87,7 @@ final class OrderControllerTest extends TestCase
         $response = $this->controller->create($request);
 
         self::assertSame(JsonResponse::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Unexpected failure', $data['error']);
     }
 
@@ -97,7 +97,7 @@ final class OrderControllerTest extends TestCase
             'cart_id' => 'cart-id',
             'shipping_address' => 'Address',
         ];
-        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $request = new Request([], [], [], [], [], [], \json_encode($payload));
 
         $order = $this->createOrderMock('order-id');
 
@@ -110,7 +110,7 @@ final class OrderControllerTest extends TestCase
         $response = $this->controller->create($request);
 
         self::assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('order-id', $data['id']);
     }
 
@@ -127,7 +127,7 @@ final class OrderControllerTest extends TestCase
         $response = $this->controller->getAll();
 
         self::assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
 
         self::assertArrayHasKey('orders', $data);
         self::assertCount(2, $data['orders']);
@@ -140,7 +140,7 @@ final class OrderControllerTest extends TestCase
         $response = $this->controller->get('');
 
         self::assertSame(JsonResponse::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Missing order ID', $data['error']);
     }
 
@@ -155,7 +155,7 @@ final class OrderControllerTest extends TestCase
         $response = $this->controller->get('missing-id');
 
         self::assertSame(JsonResponse::HTTP_NOT_FOUND, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Order with id "missing-id" not found.', $data['error']);
     }
 
@@ -170,7 +170,7 @@ final class OrderControllerTest extends TestCase
         $response = $this->controller->get('order-id');
 
         self::assertSame(JsonResponse::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('Unexpected failure', $data['error']);
     }
 
@@ -187,7 +187,7 @@ final class OrderControllerTest extends TestCase
         $response = $this->controller->get('order-id');
 
         self::assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
-        $data = json_decode((string) $response->getContent(), true);
+        $data = \json_decode((string) $response->getContent(), true);
         self::assertSame('order-id', $data['id']);
     }
 
@@ -236,4 +236,3 @@ final class OrderControllerTest extends TestCase
         return $order;
     }
 }
-

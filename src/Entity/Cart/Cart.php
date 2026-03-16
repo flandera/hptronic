@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Entity\Cart;
 
@@ -20,7 +20,12 @@ class Cart
     /**
      * @var Collection<string, CartItem>
      */
-    #[ORM\OneToMany(mappedBy: 'cart', targetEntity: CartItem::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(
+        mappedBy: 'cart',
+        targetEntity: CartItem::class,
+        cascade: ['persist', 'remove'],
+        orphanRemoval: true,
+    )]
     private Collection $items;
 
     public function __construct(string $id)
@@ -109,4 +114,3 @@ class Cart
         return $total;
     }
 }
-

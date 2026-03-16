@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Repository\Order;
 
@@ -16,7 +16,7 @@ final class DoctrineOrderRepository implements OrderRepositoryInterface
 
     public function nextIdentity(): string
     {
-        return bin2hex(random_bytes(16));
+        return \bin2hex(\random_bytes(16));
     }
 
     public function save(Order $order): void
@@ -25,6 +25,9 @@ final class DoctrineOrderRepository implements OrderRepositoryInterface
         $this->entityManager->flush();
     }
 
+    /**
+     * @return list<Order>
+     */
     public function findAll(): array
     {
         return $this->entityManager->getRepository(Order::class)->findAll();
@@ -35,4 +38,3 @@ final class DoctrineOrderRepository implements OrderRepositoryInterface
         return $this->entityManager->find(Order::class, $id);
     }
 }
-

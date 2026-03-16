@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Repository\Cart;
 
@@ -16,7 +16,7 @@ final class DoctrineCartRepository implements CartRepositoryInterface
 
     public function nextIdentity(): string
     {
-        return bin2hex(random_bytes(16));
+        return \bin2hex(\random_bytes(16));
     }
 
     public function save(Cart $cart): void
@@ -30,4 +30,3 @@ final class DoctrineCartRepository implements CartRepositoryInterface
         return $this->entityManager->find(Cart::class, $id);
     }
 }
-

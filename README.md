@@ -96,9 +96,11 @@ Default connection (configured via `DATABASE_URL` in `docker-compose.yml`):
 
 ### Running quality tools
 
-All tools are wired via Composer scripts and should be run **inside the app container** to ensure PHP 8.4 is used (even if your host only has PHP 8.1).
+All tools are wired via Composer scripts and can be run either **inside the app container** or **from your host**.
 
-From your host, open a shell inside the container:
+#### From inside the container (recommended)
+
+Open a shell in the `app` container:
 
 ```bash
 docker compose exec app bash
@@ -106,31 +108,59 @@ docker compose exec app bash
 
 Then run:
 
-- **Static analysis (PHPStan)**:
+- **Static analysis (PHPStan, level max)**:
 
-```bash
-composer phpstan
-```
+  ```bash
+  composer phpstan
+  ```
 
-- **Coding standard check (PHPCS, PSR‑12)**:
+- **Coding standard check (PHPCS + Slevomat, PSR‑12)**:
 
-```bash
-composer phpcs
-```
+  ```bash
+  composer phpcs
+  ```
+
+- **Automatic code fixer (PHPCBF) for CS issues**:
+
+  ```bash
+  vendor/bin/phpcbf src tests
+  ```
 
 - **Tests (PHPUnit via Symfony PHPUnit Bridge)**:
 
-```bash
-composer phpunit
-```
+  ```bash
+  composer phpunit
+  ```
 
-Alternatively, you can run the tests directly from the host without an interactive shell:
+#### From the host (no interactive shell)
 
-```bash
-docker compose exec app bash -lc "composer phpunit"
-```
+You can also invoke the same commands directly from your host:
 
-This will execute the full PHPUnit test suite (including all API endpoint tests) inside the PHP 8.4 container.
+- **PHPStan**:
+
+  ```bash
+  docker compose exec app bash -lc "composer phpstan"
+  ```
+
+- **PHPCS**:
+
+  ```bash
+  docker compose exec app bash -lc "composer phpcs"
+  ```
+
+- **PHPCBF (auto‑fix coding style)**:
+
+  ```bash
+  docker compose exec app bash -lc "vendor/bin/phpcbf src tests"
+  ```
+
+- **PHPUnit**:
+
+  ```bash
+  docker compose exec app bash -lc 'composer phpunit'
+  ```
+
+These commands all run inside the PHP 8.4 container, so they are independent of the PHP version installed on your host.
 
 ### Local (non‑Docker) usage (optional)
 
@@ -142,9 +172,3 @@ composer phpstan
 composer phpcs
 composer phpunit
 ```
-
-### Next steps
-
-- Define and implement the first two JSON API endpoints (e.g. products, orders).
-- Add corresponding PHPUnit tests to ensure full coverage of new code.
-
