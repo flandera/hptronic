@@ -1,0 +1,3 @@
+doctrine_fixtures:
+    # default configuration is usually enough; file kept for clarity/overrides
+

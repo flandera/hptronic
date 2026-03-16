@@ -1,0 +1,162 @@
+{
+  "info": {
+    "name": "HPtronic API",
+    "_postman_id": "c6e9e1f1-0000-0000-0000-000000000001",
+    "description": "Postman collection for HPtronic Symfony API (cart and orders).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Create cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{base_url}}/api/cart",
+              "host": ["{{base_url}}"],
+              "path": ["api", "cart"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get cart by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/cart/{{cart_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "cart", "{{cart_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add product to cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cart_id\": \"demo-cart-1\",\n  \"sku\": \"SKU-001\",\n  \"quantity\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/cart/add",
+              "host": ["{{base_url}}"],
+              "path": ["api", "cart", "add"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove product from cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cart_id\": \"demo-cart-1\",\n  \"sku\": \"SKU-001\",\n  \"quantity\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/cart/remove",
+              "host": ["{{base_url}}"],
+              "path": ["api", "cart", "remove"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Create order from cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cart_id\": \"demo-cart-1\",\n  \"shipping_address\": \"123 Main St, City\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orders",
+              "host": ["{{base_url}}"],
+              "path": ["api", "orders"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get all orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/orders",
+              "host": ["{{base_url}}"],
+              "path": ["api", "orders"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get order by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/orders/{{order_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "orders", "{{order_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "cart_id",
+      "value": "demo-cart-1"
+    },
+    {
+      "key": "order_id",
+      "value": "demo-order-1"
+    }
+  ]
+}
+

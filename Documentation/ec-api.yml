@@ -1,0 +1,402 @@
+openapi: 3.1.0
+info:
+  title: E-commerce Cart and Order API
+  description: API for managing shopping carts and orders in an e-commerce application
+  version: 1.0.0
+  contact:
+    name: API Support
+servers:
+  # Change to your own local server
+  - url: http://localhost:8000
+    description: Local development server
+
+paths:
+  /api/cart:
+    post:
+      summary: Create a new cart
+      description: Creates a new empty shopping cart
+      operationId: createCart
+      responses:
+        '200':
+          description: Cart created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/cart/{id}:
+    get:
+      summary: Get cart by ID
+      description: Retrieves a shopping cart by its ID
+      operationId: getCart
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Cart ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Cart retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '400':
+          description: Missing cart ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/cart/add:
+    post:
+      summary: Add product to cart
+      description: Adds a product to an existing cart
+      operationId: addProductToCart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cart_id
+                - sku
+              properties:
+                cart_id:
+                  type: string
+                  description: ID of the cart
+                sku:
+                  type: string
+                  description: Product SKU
+                quantity:
+                  type: integer
+                  description: Quantity to add (defaults to 1)
+                  default: 1
+                  minimum: 1
+      responses:
+        '200':
+          description: Product added to cart successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '400':
+          description: Missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/cart/remove:
+    post:
+      summary: Remove product from cart
+      description: Removes a product from an existing cart
+      operationId: removeProductFromCart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cart_id
+                - sku
+              properties:
+                cart_id:
+                  type: string
+                  description: ID of the cart
+                sku:
+                  type: string
+                  description: Product SKU
+                quantity:
+                  type: integer
+                  description: Quantity to remove (if not specified, removes all)
+                  minimum: 1
+      responses:
+        '200':
+          description: Product removed from cart successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '400':
+          description: Missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/orders:
+    post:
+      summary: Create a new order
+      description: Creates a new order from an existing cart
+      operationId: createOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cart_id
+                - shipping_address
+              properties:
+                cart_id:
+                  type: string
+                  description: ID of the cart to create order from
+                shipping_address:
+                  type: string
+                  description: Shipping address for the order
+      responses:
+        '200':
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Missing required fields or invalid cart
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      summary: Get all orders
+      description: Retrieves all orders
+      operationId: getAllOrders
+      responses:
+        '200':
+          description: Orders retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orders:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Order'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/orders/{id}:
+    get:
+      summary: Get order by ID
+      description: Retrieves an order by its ID
+      operationId: getOrder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Order ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Missing order ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        sku:
+          type: string
+          description: Product SKU (Stock Keeping Unit)
+        name:
+          type: string
+          description: Product name
+        price:
+          type: number
+          format: float
+          description: Product price
+        description:
+          type: string
+          nullable: true
+          description: Product description
+      required:
+        - sku
+        - name
+        - price
+
+    CartItem:
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/Product'
+        quantity:
+          type: integer
+          minimum: 1
+          description: Quantity of the product in cart
+        total:
+          type: number
+          format: float
+          description: Total price for this cart item (price * quantity)
+      required:
+        - product
+        - quantity
+        - total
+
+    Cart:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique cart identifier
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+          description: Items in the cart
+        item_count:
+          type: integer
+          description: Number of different items in cart
+        total_quantity:
+          type: integer
+          description: Total quantity of all items in cart
+        total:
+          type: number
+          format: float
+          description: Total price of all items in cart
+      required:
+        - id
+        - items
+        - item_count
+        - total_quantity
+        - total
+
+    OrderItem:
+      type: object
+      properties:
+        sku:
+          type: string
+          description: Product SKU
+        name:
+          type: string
+          description: Product name
+        price:
+          type: number
+          format: float
+          description: Product price at time of order
+        quantity:
+          type: integer
+          minimum: 1
+          description: Quantity ordered
+        total:
+          type: number
+          format: float
+          description: Total price for this order item
+      required:
+        - sku
+        - name
+        - price
+        - quantity
+        - total
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique order identifier
+        created_at:
+          type: string
+          format: date-time
+          description: Order creation timestamp
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+          description: Items in the order
+        total:
+          type: number
+          format: float
+          description: Total order amount
+        shipping_address:
+          type: string
+          description: Shipping address for the order
+        geo_location:
+          type: string
+          nullable: true
+          description: Geographic location information
+      required:
+        - id
+        - created_at
+        - items
+        - total
+        - shipping_address
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+      required:
+        - error
